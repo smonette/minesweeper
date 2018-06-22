@@ -1,10 +1,10 @@
 const generatePlayerBoard = (numberOfRows, numberOfColumns) => { 
   let board = []
 
-  for (let r=0; r < numberOfRows; r++){
+  for (let rowIndex=0; rowIndex < numberOfRows; rowIndex++){
     let row = []
 
-    for (let c=0; c < numberOfColumns; c++) {
+    for (let columnIndex=0; columnIndex < numberOfColumns; columnIndex++) {
       row.push(' ')
     }
     board.push(row)
@@ -16,10 +16,10 @@ const generatePlayerBoard = (numberOfRows, numberOfColumns) => {
 const generateBombBoard = (numberOfRows, numberOfColumns, numberOfBombs) => { 
   let board = []
 
-  for (let r=0; r < numberOfRows; r++){
+  for (let rowIndex=0; rowIndex < numberOfRows; rowIndex++){
     let row = []
 
-    for (let c=0; c < numberOfColumns; c++) {
+    for (let columnIndex=0; columnIndex < numberOfColumns; columnIndex++) {
       row.push(null)
     }
     board.push(row)
@@ -28,48 +28,27 @@ const generateBombBoard = (numberOfRows, numberOfColumns, numberOfBombs) => {
   let numberOfBombsPlaced = 0
 
   while (numberOfBombsPlaced < numberOfBombs){
-    let randomRowIndex = Math.floor(Math.random(numberOfRows))
-    let randomColumnIndex = Math.floor(Math.random(numberOfColumns))
+    let randomRowIndex = Math.floor(Math.random() * numberOfRows)
+    let randomColumnIndex = Math.floor(Math.random() * numberOfColumns)
 
-    board[randomRowIndex][randomColumnIndex] = "B"
+    board[randomRowIndex][randomColumnIndex] = "B";
 
-    numberOfBombsPlaced++
+    numberOfBombsPlaced++;
   }
   return board;
 }
 
+const printBoard = board => {
+  console.log(board.map(row => row.join(' | ')).join('\n'))
 
+}
 
-console.log("player board " + generatePlayerBoard(5,5))
+let playerBoard = generatePlayerBoard(3,4)
+let bombBoard = generateBombBoard(3,4,5)
 
+console.log("Player board: ")
+printBoard(playerBoard)
 
-console.log("bomb board " + generateBombBoard(5,5,2))
+console.log("bomb board:")
+printBoard(bombBoard)
 
-
-
-
-
-
-
-
-//  PART 2
-// const printBoard = (board) => {
-//   console.log('Current Board:')
-//   console.log(board[0].join('|'))
-//   console.log(board[1].join('|'))
-//   console.log(board[2].join('|'))
-
-// }
-
-// let board = [
-//               [' ',' ',' '],
-//               [' ',' ',' '],
-//               [' ',' ',' ']
-//             ];
-
-// printBoard(board)
-
-// board[0][1] = '1'
-// board[2][2] = 'B'
-
-// printBoard(board)
