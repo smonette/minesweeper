@@ -1,69 +1,44 @@
 class Game {
   constructor(numberOfRows, numberOfColumns, numberOfBombs) {
-    this._numberOfRows = numberOfRows;
-    this._numberOfColumns = numberOfColumns;
-    this._numberOfBombs = numberOfBombs;
     this._board = new Board(numberOfRows,numberOfColumns, numberOfBombs)
   }
 
   playMove(rowIndex, columnIndex){
-    this._board.flipTile(rowIndex, columnIndex)
-
-    if(playerBoard[rowIndex][columnIndex] =='B'){
+    this._board.flipTile(rowIndex, columnIndex);
+    if(this._board.playerBoard[rowIndex][columnIndex] === 'B'){
       console.log("Game Over!")
       this._board.print()
-    } else if (.hasSafeTiles){
-
+    } else if (!this._board.hasNonBombEmptySpaces()) {
+      console.log("You won!")
+    } else {
+      console.log("Current board:")
+      this._board.print();
     }
   }
 }
 
-
-
-
-let playerBoard = generatePlayerBoard(3,4)
-let bombBoard = generateBombBoard(3,4,5)
-
-console.log("Player board: ")
-printBoard(playerBoard)
-
-console.log("bomb board:")
-printBoard(bombBoard)
-
-flipTile(playerBoard, bombBoard,0,0)
-console.log("Updated Player board: ")
-printBoard(playerBoard)
-
-
-
-
-
-
-
 class Board {
     constructor(numberOfRows, numberOfColumns, numberOfBombs){
-      this._numberOfRows = numberOfRows;
-      this._numberOfColumns = numberOfColumns;
       this._numberOfBombs = numberOfBombs;
-      this._numberOfTiles = numberOfRows * numberOfColumns;
-      this._playerBoard = generatePlayerBoard(numberOfRows, numberOfColumns);
-      this._bombBoard = generateBombBoard(numberOfRows, numberOfColumns, numberOfBombs);
+      this._numberOfEmptySpaces = numberOfRows * numberOfColumns;
+      // ASK JASON: Why is this being set on Board instead of this?
+      this._playerBoard = Board.generatePlayerBoard(numberOfRows, numberOfColumns);
+      this._bombBoard = Board.generateBombBoard(numberOfRows, numberOfColumns, numberOfBombs);
     }
 
     get playerBoard(){
       return this._playerBoard
     }
 
-    flipTile() {
-        if(playerBoard[this._rowIndex][this._columnIndex] != '') {
-          console.log('This tile has already been flipped')
+    flipTile(rowIndex, columnIndex) {
+        if(this._playerBoard[rowIndex][columnIndex] != ' ') {
           return
-        } else if(playerBoard[this._rowIndex][this._columnIndex] == 'B') {
-           playerBoard[this._rowIndex][this._columnIndex] == 'B'
+        } else if(this._bombBoard[rowIndex][columnIndex] === 'B') {
+           this._playerBoard[rowIndex][columnIndex] = 'B'
         } else {
-          playerBoard[this._rowIndex][this._columnIndex] = this.getNumberOfNeighborBombs(this._rowIndex,this._columnIndex)
+          this._playerBoard[rowIndex][columnIndex] = this.getNumberOfNeighborBombs(this._rowIndex,this._columnIndex)
         }
-        numberOfTiles--;
+        this._numberOfEmptySpaces--;
     }
 
     
@@ -81,6 +56,7 @@ class Board {
       ]
       const numberOfRows = this._bombBoard.length
       const numberOfColumns = this._bombBoard[0].length
+
       let numberOfBombs = 0
 
       neighborOffsets.forEach(offset =>{
@@ -92,25 +68,31 @@ class Board {
             neighborColumnIndex >= 0 && 
             neighborColumnIndex < neighborColumns){
 
-            if(this._bombBoard[neighborRowIndex][offset] == 'B'){
+            if(this._bombBoard[neighborRowIndex][neighborColumnIndex] == 'B'){
               numberOfBombs++
             }
         }
       })
+    }
 
-      hasSafeTiles(){
-       return ? this._numberOfTiles !+= this._numberOfBombs 
+
+      hasNonBombEmptySpaces(){
+        return this._numberOfEmptySpaces !== this._numberOfBombs
       }
+      // hasSafeTiles() {
+      //  return ? this._numberOfTiles !+= this._numberOfBombs 
+      // }
       print() {
-        console.log(board.map(row => row.join(' | ')).join('\n'))
+        console.log(this._playerBoard.map(row => row.join(' | ')).join('\n'))
       }
 
       static generatePlayerBoard(numberOfRows, numberOfColumns){ 
-        let board = []
+        // ASK JASON: Why is this const? Shouldnt it be let because we're pusing into it?
+        const board = []
 
         for (let rowIndex=0; rowIndex < numberOfRows; rowIndex++){
-          let row = []
-
+          // same question
+          const row = []
           for (let columnIndex=0; columnIndex < numberOfColumns; columnIndex++) {
             row.push(' ')
           }
@@ -121,10 +103,10 @@ class Board {
 
 
       static generateBombBoard(numberOfRows, numberOfColumns, numberOfBombs) { 
-          let board = []
+          const board = []
 
           for (let rowIndex=0; rowIndex < numberOfRows; rowIndex++){
-            let row = []
+            const row = []
 
             for (let columnIndex=0; columnIndex < numberOfColumns; columnIndex++) {
               row.push(null)
@@ -135,8 +117,8 @@ class Board {
           let numberOfBombsPlaced = 0
 
           while (numberOfBombsPlaced < numberOfBombs){
-            let randomRowIndex = Math.floor(Math.random() * numberOfRows)
-            let randomColumnIndex = Math.floor(Math.random() * numberOfColumns)
+            const randomRowIndex = Math.floor(Math.random() * numberOfRows)
+            const randomColumnIndex = Math.floor(Math.random() * numberOfColumns)
             if (board[randomRowIndex][randomColumnIndex] !== "B") {
               board[randomRowIndex][randomColumnIndex] = "B";
               numberOfBombsPlaced++;
@@ -144,10 +126,9 @@ class Board {
           }
           return board;
         }
-
-
-      return numberOfBombs
-
 }
 
+
+const g =  new Game(3,3,3)
+g.playMove(0,0)
 
